@@ -2,7 +2,7 @@
 
 Stillframe captures and annotates screenshots, stitches scrolling content, and records your screen on macOS. It uses AppKit, SwiftUI, ScreenCaptureKit, and Vision. Captures and OCR stay on your Mac.
 
-Requires **macOS 15+** and Apple's Swift toolchain. The test suite requires full Xcode; scripts select `/Applications/Xcode.app` when present without changing your system's developer-directory setting.
+Requires **macOS 15+** and Xcode with a macOS 15 or newer SDK. The scripts use `/Applications/Xcode.app` when present. Set `DEVELOPER_DIR` to use a different Xcode installation.
 
 ## Build and launch
 
@@ -26,7 +26,7 @@ The build assembles and ad-hoc signs a local `Stillframe.app` in this directory.
 - **Copy / Export:** copy the rendered image (Shift–Command–C) or save a PNG/JPEG (Command–S). The capture overlay also supports dragging the edited preview into other apps.
 - **Pin:** keep a resizable copy above other windows.
 - **History:** captures and edits survive relaunch. Search by name and filter images/videos. Right-click to rename, reveal, or delete a capture.
-- **Record:** record the main display at up to 3840 × 2160, 30 fps, H.264 MP4, optionally including system audio. Stillframe's windows are excluded. Stop from the editor, menu bar, or global shortcut, then play or export the finished video. Quitting while the recorder is busy is blocked to protect its output.
+- **Record:** record the main display as H.264 MP4 at up to 3840 × 2160, with 15, 30, or 60 fps capture settings and optional system audio. Stillframe's windows are excluded. Stop from the editor, menu bar, or global shortcut, then play or export the finished video. Quitting while the recorder is busy is blocked to protect its output.
 
 ## Scrolling capture
 
@@ -52,7 +52,7 @@ The first capture or recording requires **System Settings → Privacy & Security
 
 ## Scope
 
-This is a working independent implementation of the core local capture workflow, not full CleanShot parity. Webcam/microphone recording, automatic scrolling, horizontal stitching, Studio Mode/zoom editing, and cloud hosting/collaboration are not implemented. Recording currently targets the main display; area/window screenshots support the native system selection UI.
+This is a working independent implementation of the core local capture workflow, not full CleanShot parity. Webcam/microphone recording, automatic scrolling, horizontal stitching, Studio Mode/zoom editing, and cloud hosting/collaboration are not implemented. Recording currently targets the main display; area screenshots use Stillframe’s region picker and window screenshots use the macOS window picker.
 
 ## Tests
 
@@ -60,7 +60,7 @@ This is a working independent implementation of the core local capture workflow,
 ./test.sh
 ```
 
-Tests cover unconditional PNG clipboard publication even with an old opt-out setting, shortcut migration/function keys/punctuation, extension redaction/region retention, flattened redaction, crop orientation/bounds, annotations, history, settings recovery and persistence, per-capture backgrounds, legacy metadata, shortcut validation, three-frame scroll stitching, real MP4 trimming and GIF decoding, destination replacement, source preservation, invalid ranges and export cancellation. Media integration tests need access to macOS encoder services; a restricted sandbox may report “Cannot Encode” even though the same tests pass with normal media-service access. Live screen capture and recording require macOS permissions.
+Tests cover unconditional PNG clipboard publication even with an old opt-out setting, shortcut migration/function keys/punctuation, extension redaction/region retention, flattened redaction, crop orientation/bounds, annotations, history, settings recovery and persistence, per-capture backgrounds, legacy metadata, shortcut validation, three-frame scroll stitching, real MP4 trimming and GIF decoding, destination replacement, source preservation, invalid ranges and export cancellation. Run the full suite from a regular macOS terminal session. The clipboard and video export integration tests require access to the system pasteboard and H.264 encoder. Live screen capture and recording require macOS permissions.
 
 ## Credits
 
