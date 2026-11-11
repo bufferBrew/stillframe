@@ -199,11 +199,13 @@ final class CaptureStore: ObservableObject {
     func copyImage() {
         guard let rendered else { return }
         guard let png = ImageRenderer.png(rendered) else { error = "Could not copy the captured image."; return }
-        let item = NSPasteboardItem()
-        item.setData(png, forType: .png)
-        if let tiff = rendered.tiffRepresentation { item.setData(tiff, forType: .tiff) }
-        pasteboard.clearContents()
-        guard pasteboard.writeObjects([item]) else { error = "The clipboard is currently unavailable."; return }
+        let tiff = rendered.tiffRepresentation
+        pasteboard.declareTypes(tiff == nil ? [.png] : [.png, .tiff], owner: nil)
+        guard pasteboard.setData(png, forType: .png) else {
+            error = "The clipboard is currently unavailable."
+            return
+        }
+        if let tiff { pasteboard.setData(tiff, forType: .tiff) }
         notice = "Screenshot copied to clipboard"
     }
     func export() {
