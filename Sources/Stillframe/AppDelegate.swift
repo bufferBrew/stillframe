@@ -43,7 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             Task { @MainActor in
                 guard let self, !self.recorder.isBusy else { return }
                 if id == 4 {
-                    if self.scrolling.isActive { self.scrolling.addFrame() } else { self.startScrolling() }
+                    self.scrollOrAdd()
                     return
                 }
                 if id == 5 { self.scrolling.finish(); return }
@@ -91,7 +91,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         scrolling.begin(seed: frozen, region: selected.captureRect)
     }
     private func configureScrollingKeys() {
-        scrolling.addShortcut = store.preferences.shortcuts.first { $0.id == 4 }?.label ?? "Add Frame"
+        scrolling.addShortcut = store.preferences.shortcuts.first { $0.id == 4 }?.label ?? "Scroll & Capture"
         scrolling.finishShortcut = store.preferences.shortcuts.first { $0.id == 5 }?.label ?? "Finish"
     }
     private func setShortcutEditing(_ editing: Bool) {
@@ -112,7 +112,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             }
         }
     }
-    @objc func scrollOrAdd() { if scrolling.isActive { scrolling.addFrame() } else { startScrolling() } }
+    @objc func scrollOrAdd() { if scrolling.isActive { scrolling.scrollAndCapture() } else { startScrolling() } }
     @objc func finishScrolling() { scrolling.finish() }
     @objc func importImage() { showWindow(); store.importImage() }
     @objc func pasteImage() { showWindow(); store.pasteImage() }
@@ -164,7 +164,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let areaItem = menuItem("Capture Area", #selector(area)); areaItem.tag = 1; file.addItem(areaItem)
         file.addItem(menuItem("Capture Window", #selector(captureWindow)))
         let screenItem = menuItem("Capture Screen", #selector(screen)); screenItem.tag = 2; file.addItem(screenItem)
-        let scrollItem = menuItem("Scrolling Capture / Add Frame", #selector(scrollOrAdd)); scrollItem.tag = 4; file.addItem(scrollItem)
+        let scrollItem = menuItem("Scroll & Capture", #selector(scrollOrAdd)); scrollItem.tag = 4; file.addItem(scrollItem)
         let finishItem = menuItem("Finish Scrolling Capture", #selector(finishScrolling)); finishItem.tag = 5; file.addItem(finishItem)
         file.addItem(menuItem("Extend Screenshot with Scrolling…", #selector(extendScrolling)))
         file.addItem(.separator())

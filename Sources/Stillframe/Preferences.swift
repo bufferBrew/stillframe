@@ -11,7 +11,7 @@ struct ShortcutBinding: Codable, Equatable, Identifiable {
         case 1: return "Capture area"
         case 2: return "Capture screen"
         case 3: return "Start / stop recording"
-        case 4: return "Scrolling capture / add frame"
+        case 4: return "Scroll & Capture"
         default: return "Finish scrolling capture"
         }
     }

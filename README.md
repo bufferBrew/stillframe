@@ -17,7 +17,7 @@ The build assembles and ad-hoc signs a local `Stillframe.app` in this directory.
 
 - **Area / Window / Screen:** select a region, a window, or the main display. Every completed screenshot is automatically copied to the clipboard as PNG and TIFF, as well as saved in your library. Area selection supports Return for the whole display. Escape cancels interactive capture. Timer offers 3, 5, or 10 seconds to prepare your capture.
 - **Settings:** open the gear button or Command–comma. Record your own shortcuts (or use key/modifier selectors), configure capture delay, cursor/shadows, open-editor behavior, default PNG/JPEG export, recording frame rate/resolution/audio, and default background. Apply saves changes locally; unavailable shortcut combinations leave the previous bindings active.
-- **Global shortcuts:** Control–Command–Shift–4 captures an area; Control–Command–Shift–3 captures the main display; Control–Command–Shift–5 starts/stops recording; Control–Command–Shift–6 starts scrolling capture or adds a frame to an active scrolling capture; Control–Command–Shift–Return finishes and copies the combined screenshot. All five can be changed in Settings. Option combinations, F1–F20, navigation keys, and punctuation are supported; macOS-reserved shortcuts may be unavailable. Recommended shortcuts can be restored with one button. Older three-shortcut configurations are migrated without replacing your choices. Stillframe stays in the menu bar when its window closes.
+- **Global shortcuts:** Control–Command–Shift–4 captures an area; Control–Command–Shift–3 captures the main display; Control–Command–Shift–5 starts/stops recording; Control–Command–Shift–6 starts scrolling capture or scrolls and captures the next frame; Control–Command–Shift–Return finishes and copies the combined screenshot. All five can be changed in Settings. Option combinations, F1–F20, navigation keys, and punctuation are supported; macOS-reserved shortcuts may be unavailable. Recommended shortcuts can be restored with one button. Older three-shortcut configurations are migrated without replacing your choices. Stillframe stays in the menu bar when its window closes.
 - **Import / Paste Image:** open an image with Command–O, or paste an image using Shift–Command–V. Import works without screen permissions.
 - **Annotate:** select a tool and drag on the image. Arrow, rectangle, ellipse, pencil, highlight, solid redaction, text and numbered steps are available. Click to place text or a step. Set the annotation text before placing it.
 - **Crop:** drag the desired region. Crop flattens existing marks; Undo restores the previous image and editable marks. Undo/Redo use Command–Z / Shift–Command–Z and apply during the current editing session.
@@ -30,11 +30,11 @@ The build assembles and ad-hoc signs a local `Stillframe.app` in this directory.
 
 ## Scrolling capture
 
-Choose **Scroll** (or File → Scrolling Capture / Add Frame), then drag a rectangle around the scrolling content. The first frame is captured automatically. Scroll **down** about half a screen in the target app, choose **Add Frame**, and repeat. **Finish** saves the combined image to your library and copies it to the clipboard for annotation and export; Cancel discards the in-progress session.
+Choose **Scroll**, then drag a rectangle around the scrolling content. Stillframe takes the first frame automatically. Choose **Scroll & Capture** to scroll the selected window down and stitch in the next section. Repeat until you have what you need, then choose **Finish** to save and copy the combined image. **Cancel** discards the session.
 
-To continue a screenshot you just took, choose **Extend with Scrolling** from its capture overlay, **Extend…** in the editor, or the library's right-click menu. New area/fullscreen captures remember their region, so extension reuses it automatically. Older, window, imported or cropped screenshots ask you to select the original region again (Return selects the full display). The original screenshot becomes frame 1. Scroll down in the target app, press **Control–Command–Shift–6** to append a frame, and **Control–Command–Shift–Return** to finish and copy. Existing annotations/redactions are flattened into the seed and preserved; decorative backgrounds are excluded from matching. The original library item is retained.
+To continue a screenshot you just took, choose **Extend with Scrolling** from its capture overlay, **Extend…** in the editor, or the library's right-click menu. New area/fullscreen captures remember their region, so extension reuses it automatically. Older, window, imported or cropped screenshots ask you to select the original region again (Return selects the full display). The original screenshot becomes frame 1. Press **Control–Command–Shift–6** to scroll and capture the next section, and **Control–Command–Shift–Return** to finish and copy. Existing annotations/redactions are flattened into the seed and preserved; decorative backgrounds are excluded from matching. The original library item is retained.
 
-Keep the region/scale unchanged and leave overlapping content visible. Exclude fixed headers, floating controls and scrollbars where possible. Stillframe matches overlapping image rows and rejects duplicate, missing or ambiguous matches. If automatic matching fails on repetitive content, enable **Set overlap manually** and specify the percentage of the new frame already visible in the previous one. This is a guided workflow: you scroll and choose when to sample; it does not inject scrolling events or require Accessibility access. Currently vertical/downward only, with an 80-megapixel output limit.
+Keep the region/scale unchanged and leave overlapping content visible. Exclude fixed headers, floating controls and scrollbars where possible. Stillframe matches overlapping image rows and rejects duplicate, missing or ambiguous matches. If the window does not respond to automatic scrolling, scroll it down yourself and choose **Add Current Frame**. If needed, enable **Set overlap manually** and specify how much of the new frame was visible before scrolling. Scrolling is downward, with an 80-megapixel output limit.
 
 ## Video clips and GIFs
 
@@ -44,7 +44,7 @@ Select a recording in the library. Set **Start** and **End** in seconds, or use 
 
 ## Screen permissions
 
-The first capture or recording requires **System Settings → Privacy & Security → Screen & System Audio Recording → Stillframe**. Enable access, then quit and reopen Stillframe when macOS requests it. No Accessibility permission or microphone access is needed. Timer capture hides the app while you prepare the screen.
+The first capture or recording requires **System Settings → Privacy & Security → Screen & System Audio Recording → Stillframe**. Enable access, then quit and reopen Stillframe when macOS requests it. **Scroll & Capture** also needs **Privacy & Security → Accessibility** to send a scroll event. Manual scrolling with **Add Current Frame** works without that permission. No microphone access is needed. Timer capture hides the app while you prepare the screen.
 
 ## Local data
 
@@ -52,7 +52,7 @@ The first capture or recording requires **System Settings → Privacy & Security
 
 ## Scope
 
-This is a working independent implementation of the core local capture workflow, not full CleanShot parity. Webcam/microphone recording, automatic scrolling, horizontal stitching, Studio Mode/zoom editing, and cloud hosting/collaboration are not implemented. Recording currently targets the main display; area screenshots use Stillframe’s region picker and window screenshots use the macOS window picker.
+This is a working independent implementation of the core local capture workflow, not full CleanShot parity. Webcam/microphone recording, horizontal stitching, Studio Mode/zoom editing, and cloud hosting/collaboration are not implemented. Recording currently targets the main display; area screenshots use Stillframe’s region picker and window screenshots use the macOS window picker.
 
 ## Tests
 
