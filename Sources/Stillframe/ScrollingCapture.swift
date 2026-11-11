@@ -9,6 +9,7 @@ final class ScrollingCapture: ObservableObject {
     @Published var manual = false
     @Published var overlapPercent = 50.0
     @Published var result: NSImage?
+    @Published private(set) var framePreview: NSImage?
     private var region = CGRect.zero
     private var targetWindow: CGWindowID?
     private var panel: NSPanel?
@@ -28,7 +29,7 @@ final class ScrollingCapture: ObservableObject {
             return
         }
         guard let screen = NSScreen.main ?? NSScreen.screens.first else { onCancel?(); return }
-        result = seed; count = seed == nil ? 0 : 1; manual = false
+        result = seed; framePreview = seed; count = seed == nil ? 0 : 1; manual = false
         targetWindow = nil
         message = seed == nil ? "Capturing the first frame…" : "Your screenshot is the first frame."
         if let seedRegion, seedRegion.width > 0, seedRegion.height > 0, seed != nil {
@@ -40,7 +41,7 @@ final class ScrollingCapture: ObservableObject {
             picker.choose { [weak self] rect in
                 guard let self else { return }
                 self.picker = nil
-                guard let rect else { self.result = nil; self.count = 0; self.onCancel?(); return }
+                guard let rect else { self.result = nil; self.framePreview = nil; self.count = 0; self.onCancel?(); return }
                 self.region = rect
                 self.targetWindow = self.windowAtRegionCenter()
                 self.showControls(screen: screen)
@@ -49,10 +50,14 @@ final class ScrollingCapture: ObservableObject {
         }
     }
     private func showControls(screen: NSScreen) {
-        let control = NSPanel(contentRect: NSRect(x: screen.visibleFrame.maxX - 430, y: screen.visibleFrame.minY + 24, width: 400, height: 380), styleMask: [.titled, .nonactivatingPanel], backing: .buffered, defer: false)
+        let control = NSPanel(contentRect: NSRect(x: screen.visibleFrame.maxX - 430, y: screen.visibleFrame.minY + 24, width: 400, height: 286), styleMask: [.titled, .nonactivatingPanel], backing: .buffered, defer: false)
         control.title = "Scrolling Capture"; control.level = .floating; control.isReleasedWhenClosed = false
         control.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        control.contentView = NSHostingView(rootView: ScrollControls(session: self))
+        let hosting = NSHostingView(rootView: ScrollControls(session: self))
+        // A tall stitched image must never change the floating panel's size.
+        hosting.sizingOptions = []
+        control.contentView = hosting
+        control.setContentSize(NSSize(width: 400, height: 286))
         panel = control; NSApp.unhide(nil); control.orderFrontRegardless()
     }
     func scrollAndCapture() {
@@ -124,6 +129,7 @@ final class ScrollingCapture: ObservableObject {
                     }.value
                     result = NSImage(data: data)
                 } else { result = image }
+                framePreview = image
                 count += 1
                 message = "Frame \(count) added."
             } catch StitchError.noMovement where scrolling {
@@ -133,13 +139,13 @@ final class ScrollingCapture: ObservableObject {
     }
     func finish() {
         guard !isBusy, panel != nil, let result else { return }
-        panel?.close(); panel = nil; self.result = nil; count = 0
+        panel?.close(); panel = nil; self.result = nil; framePreview = nil; count = 0
         onFinish?(result, region)
     }
     func cancel() {
         guard !isBusy else { return }
         if let picker { picker.cancel(); return }
-        panel?.close(); panel = nil; result = nil; count = 0; onCancel?()
+        panel?.close(); panel = nil; result = nil; framePreview = nil; count = 0; onCancel?()
     }
 }
 
@@ -147,9 +153,15 @@ private struct ScrollControls: View {
     @ObservedObject var session: ScrollingCapture
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack { Label("\(session.count) frames", systemImage: "rectangle.stack").font(.headline); Spacer(); if session.isBusy { ProgressView().controlSize(.small) } }
-            if let image = session.result {
-                Image(nsImage: image).resizable().aspectRatio(contentMode: .fit).frame(maxHeight: 72).accessibilityLabel("Combined screenshot preview")
+            HStack {
+                Label("\(session.count) frames", systemImage: "rectangle.stack").font(.headline)
+                if session.isBusy { ProgressView().controlSize(.small) }
+                Spacer()
+                if let image = session.framePreview {
+                    Image(nsImage: image).resizable().scaledToFit()
+                        .frame(width: 112, height: 56, alignment: .trailing)
+                        .accessibilityLabel("Latest captured frame")
+                }
             }
             Text(session.message).font(.callout).fixedSize(horizontal: false, vertical: true)
             Toggle("Set overlap manually", isOn: $session.manual)
@@ -158,7 +170,7 @@ private struct ScrollControls: View {
             }
             Text("Press \(session.addShortcut) to scroll and capture. Press \(session.finishShortcut) to finish and copy.").font(.caption).foregroundStyle(.secondary)
             HStack {
-                Button("Cancel") { session.cancel() }
+                Button("Cancel") { session.cancel() }.keyboardShortcut(.cancelAction)
                 Button("Add Current Frame") { session.addFrame() }
                     .help("Capture the visible region after scrolling manually")
                 Spacer()
@@ -167,7 +179,10 @@ private struct ScrollControls: View {
             Button { session.scrollAndCapture() } label: {
                 Label("Scroll & Capture", systemImage: "chevron.down.2").frame(maxWidth: .infinity)
             }.buttonStyle(.borderedProminent)
-        }.padding(16).disabled(session.isBusy)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .disabled(session.isBusy)
     }
 }
 
