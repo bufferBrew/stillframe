@@ -2,10 +2,9 @@
 
 Stillframe captures and annotates screenshots, stitches scrolling content, and records your screen on macOS. It uses AppKit, SwiftUI, ScreenCaptureKit, and Vision. Captures and OCR stay on your Mac.
 
+[![Stillframe’s Scrolling Capture controls beside a stitched trail-guide screenshot](docs/stillframe-hero.png)](docs/stillframe-demo.mp4)
 
-![Stillframe’s Scrolling Capture controls beside a stitched trail-guide screenshot](docs/stillframe-hero.png)
-
-*Three overlapping frames stitched into one screenshot with Stillframe.*
+**[Watch the 30-second demo (MP4)](docs/stillframe-demo.mp4)** · An animated walkthrough using native Stillframe screenshots and a sample trail guide.
 
 Choose **Scroll**, select the content, then click **Scroll & Capture** to add each section. Click **Finish** to save the combined screenshot and copy it to the clipboard. See the [30-second demo storyboard](docs/demo-storyboard.md) for the full walkthrough.
 

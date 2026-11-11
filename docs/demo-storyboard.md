@@ -2,6 +2,8 @@
 
 **Long pages. One screenshot.**
 
+[Watch the 30-second demo (MP4)](stillframe-demo.mp4). The video animates native Stillframe screenshots and a sample stitched image. The poster was made with [Monkr](https://github.com/blaineam/Monkr), and the video uses [Programatic Demo](https://github.com/ashrafchowdury/programatic-demo) for its cursor animation and rendering workflow.
+
 Use a sample trail guide with content below the fold. Before recording, grant Stillframe screen recording and Accessibility permissions. Open a blank document for the paste demonstration.
 
 | Time | On-screen action | Cursor or click | Caption | Transition |
