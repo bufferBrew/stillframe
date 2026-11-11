@@ -1,0 +1,5 @@
+# Repository ownership: all files require review by the repository owner.
+* @bufferBrew
+
+# Changes to review ownership also require owner review.
+/.github/CODEOWNERS @bufferBrew
